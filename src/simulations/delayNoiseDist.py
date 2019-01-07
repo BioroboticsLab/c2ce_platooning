@@ -4,9 +4,9 @@ import pickle
 
 from common.observation import *
 from common.units import MILLISECOND, METER
+from models.sensorSim import ModelSensor
+from models.transmitControlSensor import ModelTransmitControlSensor
 from simulations.sim import Sim
-from models.transmitControlSim import ModelTransmitControlData
-from models.transmitDataSim import ModelTransmitData
 import numpy as np
 
 
@@ -14,10 +14,9 @@ def get_max(model, headway):
     distances = model.leader.x - model.follower.x
     return max([abs(item - headway) for item in distances])
 
-
+# Simulation with increasing sensor noise and delay.
+# Only for Sensor and Future + Sensor
 if __name__ == '__main__':
-    save = True
-    load = False
     iterations = 30000
     step_size = 1 * MILLISECOND
     headway = 30 * METER
@@ -30,21 +29,21 @@ if __name__ == '__main__':
     s = 0
 
     delay_step = 30
-    noise_step = 30
+    noise_step = 5
 
     delays = [(s + delay_step * i) * MILLISECOND for i in range(n)]
-    noises = [(s + noise_step * i) * MILLISECOND for i in range(n)]
+    noises = [(0 + noise_step * i) * MILLISECOND for i in range(n)]
 
+    # models = []
     tmp_models = {}
     for delay in delays:
         tmp_models[delay] = {}
         for noise in noises:
             tmp_models[delay][noise] = [
-                ModelTransmitData(iterations, headway, step_size, todo, noise, delay),
-                ModelTransmitControlData(iterations, headway, step_size, todo, noise, delay),
+                ModelSensor(iterations, headway, step_size, todo, noise, delay),
+                ModelTransmitControlSensor(iterations, headway, step_size, todo, noise, 0.0, delay, delay),
             ]
     models = []
-
     for delay in delays:
         for noise in noises:
             models.extend(tmp_models[delay][noise])
@@ -85,18 +84,16 @@ if __name__ == '__main__':
                 minimal = err
             together += err
             n += 1
-    plot_surface(noises, delays, errors, "Delay (s)", "Clock skew (s)", "Error (m)", "", -120)
+    plot_surface(noises, delays, errors, "Delay (s)", "Sensor Noise (m)", "Error (m)", "", -60)
     print(type(tmp_models[delay][noise][0]).__name__)
     print(f"Max err: delay: {errComb[0]}, noise: {errComb[1]}, err: {errors[errComb[0]][errComb[1]]}")
     print(f"Min: {minimal}")
     print(f"Avg: {together/n}")
 
     errComb = [0, 0]
-    minimal = 9999999
-    n = 0
-    minimal = 9999999
     together = 0
     n = 0
+    minimal = 9999999
     for delay in tmp_models:
         errors[delay] = {}
         for noise in tmp_models[delay]:
@@ -109,9 +106,9 @@ if __name__ == '__main__':
                 minimal = err
             together += err
             n += 1
-    plot_surface(noises, delays, errors, "Delay (s)", "Clock skew (s)", "Error (m)", "", -120)
+    plot_surface(noises, delays, errors, "Delay (s)", "Sensor Noise (m)", "Error (m)", "", -60)
     print(type(tmp_models[delay][noise][1]).__name__)
-    print(f"Model 1: Max err: delay: {errComb[0]}, noise: {errComb[1]}, err: {errors[errComb[0]][errComb[1]]}")
+    print(f"Max err: delay: {errComb[0]}, noise: {errComb[1]}, err: {errors[errComb[0]][errComb[1]]}")
     print(f"Min: {minimal}")
     print(f"Avg: {together/n}")
 
@@ -130,8 +127,8 @@ if __name__ == '__main__':
                 maximal = errors[delay][noise]
             together += errors[delay][noise]
             n += 1
-    plot_surface(noises, delays, errors, "Delay (s)", "Clock skew (s)", "Milliseconds not in charging area (ms)",
-                 "", -120)
+    plot_surface(noises, delays, errors, "Delay (s)", "Sensor Noise (m)", "Milliseconds not in charging area (ms)",
+                 "", -30)
     print(f"Max err: {maximal}")
     print(f"Min: {minimal}")
     print(f"Avg: {together/n}")
@@ -151,8 +148,8 @@ if __name__ == '__main__':
                 maximal = errors[delay][noise]
             together += errors[delay][noise]
             n += 1
-    plot_surface(noises, delays, errors, "Delay (s)", "Clock skew (s)", "Milliseconds not in charging area (ms)",
-                 "", -120)
+    plot_surface(noises, delays, errors, "Delay (s)", "Sensor Noise (m)", "Milliseconds not in charging area (ms)",
+                 "", -30)
     print(f"Max err: {maximal}")
     print(f"Min: {minimal}")
     print(f"Avg: {together/n}")

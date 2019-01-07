@@ -19,7 +19,7 @@ Each Simulation is a main method that defines which models are run with which co
 The Sim class is used to run multiple methods in parallel. 
 Each Simulation contains also the code to plot the values of interest.
 Some of the longer running Simulations contain caching code to write / read the models to / from disk. The files can be 
-found under *Simulation/cache/* and are named by source filename and the configuration.
+found under *cache/* and are named by source filename and the configuration.
 
 ## Dependencies: 
 - matplotlib

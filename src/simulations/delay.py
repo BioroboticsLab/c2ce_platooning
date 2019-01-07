@@ -1,6 +1,5 @@
 import os
 import pickle
-
 from common.observation import *
 from common.units import MILLISECOND, METER, CENTIMETER
 from models.sensorSim import ModelSensor
@@ -10,6 +9,7 @@ from models.transmitControlSim import ModelTransmitControlData
 from models.transmitDataSim import ModelTransmitData
 import numpy as np
 
+# Simulation without noises but with increasing delay
 if __name__ == '__main__':
     iterations = 30000
     step_size = 1 * MILLISECOND
