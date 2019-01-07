@@ -1,7 +1,8 @@
 # Simulations for Car2Car communication
 
-This project contains code to simulate different car2car communication models.
+This project contains code to simulate the behaviour of two platooning cars. 
 Plotting and evaluation is implemented to gather information on the performance to keep a stable distance between two cars.
+A sensor based model and three Car2Car communication models are implemented.
 
 ## Code
 
